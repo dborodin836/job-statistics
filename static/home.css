@@ -1,0 +1,36 @@
+body {
+    background-color: #b669f0;
+    color: #d7d3db;
+}
+
+.logo {
+    text-align: center;
+    font-size: 500%;
+    font-family: 'Fredoka One', cursive;
+}
+
+.search-field {
+    background-color: #d7d3db;
+    width: 75%;
+    font-size: 250%;
+    border: #d7d3db;
+    border-radius: 30px;
+    padding: 0.75rem;
+    color: #424242;
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+}
+
+.search-btn {
+}
+
+.logo::selection, .search-field::selection {
+    background: transparent;
+}
+
+.logo::selection, .search-field::-moz-selection {
+    background: transparent;
+}
