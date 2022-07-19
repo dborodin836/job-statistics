@@ -20,11 +20,24 @@ body {
 }
 
 .form-group {
-    display: flex;
     align-items: center;
 }
 
 .search-btn {
+    margin: 15px;
+    background-color: #d7d3db;
+    border-radius: 30px;
+    padding: 0.75rem;
+    border: #d7d3db;
+    width: 15%;
+    font-family: 'Fredoka One', cursive;
+    font-size: 20px;
+}
+
+.search-btn:hover {
+    background-color: #c1c0c7;
+    border: #d7d3db;
+    font-family: 'Fredoka One', cursive;
 }
 
 .logo::selection, .search-field::selection {
