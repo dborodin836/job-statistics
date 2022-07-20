@@ -7,21 +7,49 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+          integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
 </head>
 <body>
 <h4 class="logo">Job Statistics</h4>
-<div class="form-group">
 
-    <form class="form-group" action="">
-        <div style="text-align: center">
-            <input class="search-field" type="text">
+<form action="/results" method="post">
+
+    <h3 class="sub-text">Select your primary skill.</h3>
+    <div class="container-checks">
+        <ul class="ks-cboxtags">
+            {% for language in languages %}
+            <li><input type="radio" id="{{ language }}-radio" name="primary_language" value="{{ language }}">
+                <label for="{{ language }}-radio">{{ language }}</label><br>
+            <li>
+                {% endfor %}
+        </ul>
+    </div>
+
+
+    <h3 class="sub-text">Select skills you want to see in the report. If you don't select anything you will see all the
+        skills in the report.</h3>
+    <div class="container-checks">
+        <ul class="ks-cboxtags">
+            {% for segment in skills %}
+            <li><input type="checkbox" id="{{ segment }}" value="{{ segment }}">
+                <label for="{{ segment }}">{{ segment }}</label></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="form-group">
+        <div class="form-group" action="">
+            <div style="text-align: center">
+                <input class="search-field" type="text">
+            </div>
+            <div style="text-align: center">
+                <input class="search-btn" type="submit">
+            </div>
         </div>
+    </div>
 
-        <div style="text-align: center">
-            <input class="search-btn" type="submit">
-        </div>
-
-    </form>
-</div>
+</form>
 </body>
 </html>

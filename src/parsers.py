@@ -13,8 +13,9 @@ class BaseLinkParser(metaclass=abc.ABCMeta):
     Parses all pages and gathers all links.
     """
 
-    def __init__(self, start_url: str):
+    def __init__(self, start_url: str, tools: list):
         self.start_url = start_url
+        self.tools = tools
 
     @abc.abstractmethod
     def get_all_links(self):
@@ -38,11 +39,12 @@ class BaseLinkParser(metaclass=abc.ABCMeta):
 
 class DjinniLinkParser(BaseLinkParser):
 
-    def __init__(self, start_url):
+    def __init__(self, start_url, tools):
+        self.all_data = ""
         self.start_page_data = requests.get(start_url).text
         self.offers_links = None
         self.BASE_URL = start_url
-        super().__init__(start_url)
+        super().__init__(start_url, tools)
         self.get_all_links()
 
     def get_base_url(self):
@@ -85,7 +87,18 @@ class DjinniLinkParser(BaseLinkParser):
                 all_data.append(' '.join(res) + profile.getText())
             except Exception:
                 logger.critical("Failed to get page")
-        return " ".join(all_data).replace("\n", ' ').lower()
+        self.all_data = " ".join(all_data).replace("\n", ' ').lower()
+
+    def handle_data(self):
+        counter = Counter(self.all_data.lower().split())
+
+        results = []
+        for tool in self.tools:
+            results.append(
+                (tool, counter.get(tool))
+            )
+
+        return results
 
 
 def print_djinni_data():
@@ -94,16 +107,9 @@ def print_djinni_data():
 
     counter = Counter(data.lower().split())
 
-    with open(f"{str(datetime.now())[:10]}.txt", "w", encoding="utf-8") as file:
-        file.write(data)
+    # with open(f"{str(datetime.now())[:10]}.txt", "w", encoding="utf-8") as file:
+    #     file.write(data)
 
-    def order_by_amount(x):
-        try:
-            return int(x.split()[-1])
-        except ValueError:
-            return 0
-
-    # tools =
     tools = ['python', 'js', 'sql', 'nosql', 'postgres', 'mysql', 'mongodb', 'aws', 'cloud',
              'fastapi', 'django', 'flask', 'celery', 'redis', 'docker', 'docker swarm', 'asyncio',
              'git', 'gcp', 'azure', 'react', 'angular', 'kubernetes', 'sqlalchemy', 'keydb',
@@ -120,7 +126,8 @@ def print_djinni_data():
 
     results = []
     for tool in tools:
-        results.append(f"{tool} | {counter.get(tool)}".rjust(20))
-    results.sort(key=order_by_amount, reverse=True)
-    print(*results, sep="\n")
-    return '\n'.join(results)
+        results.append(
+            (tool, counter.get(tool))
+        )
+
+    return results
