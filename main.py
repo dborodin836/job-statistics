@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
@@ -26,6 +26,12 @@ LANGUAGES = [
 @app.route('/')
 def home():
     return render_template("home.html", skills=SKILLS, languages=LANGUAGES)
+
+
+@app.route('/results', methods=['POST', 'GET'])
+def results():
+    if request.method == "POST":
+        ...
 
 
 if __name__ == '__main__':
