@@ -1,4 +1,6 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
+
+from src.parsers import DjinniLinkParser
 
 app = Flask(__name__)
 
@@ -31,8 +33,24 @@ def home():
 @app.route('/results', methods=['POST', 'GET'])
 def results():
     if request.method == "POST":
-        ...
+        url = "https://djinni.co/jobs/"
+
+        if request.form.get('primary_language') and request.form.get('primary_language') in LANGUAGES:
+            url = f"https://djinni.co/jobs/keyword-{request.form.get('primary_language')}/"
+
+        if request.form.get("keyword"):
+            url += f'?keywords={request.form.get("keyword")}'
+
+        user_skill_input = None
+        if request.form.get("skills"):
+            user_skill_input = request.form.getlist("skills")
+
+        parser = DjinniLinkParser(url, user_skill_input or SKILLS)
+        parser.get_data()
+        res = parser.handle_data()
+        return render_template('results.html', data=res)
+    return redirect('/')
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, threaded=True)

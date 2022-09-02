@@ -1,6 +1,6 @@
 import abc
-from collections import Counter
-from datetime import datetime
+import sortedcontainers
+from collections import Counter, namedtuple
 from operator import methodcaller
 
 import requests
@@ -79,55 +79,26 @@ class DjinniLinkParser(BaseLinkParser):
                 parser = BeautifulSoup(self.get_page(url), "html.parser")
                 profile = parser.find("p", class_="profile")
                 data = parser.findAll("div", class_="profile-page-section")
-                res = map(methodcaller("getText"), data)
+                res = list(map(methodcaller("getText"), data))
                 try:
                     profile_text = profile.getText()
+                    all_data.append(profile_text)
                 except AttributeError:
                     logger.error("Job has no profile section")
-                all_data.append(' '.join(res) + profile.getText())
-            except Exception:
-                logger.critical("Failed to get page")
+                t = ' '.join(res)
+                all_data.append(t)
+            except Exception as e:
+                logger.critical(f"Failed to get page {e}")
         self.all_data = " ".join(all_data).replace("\n", ' ').lower()
 
     def handle_data(self):
         counter = Counter(self.all_data.lower().split())
 
-        results = []
+        results = sortedcontainers.SortedList(key=lambda x: -x.results)
+        SkillResult = namedtuple("Skill", "skill results")
         for tool in self.tools:
-            results.append(
-                (tool, counter.get(tool))
+            amount = counter.get(tool) or 0
+            results.add(
+                SkillResult(tool, amount)
             )
-
         return results
-
-
-def print_djinni_data():
-    data = DjinniLinkParser(
-        "https://djinni.co/jobs/keyword-python/?keywords=%28middle%7Cjunior").get_data()
-
-    counter = Counter(data.lower().split())
-
-    # with open(f"{str(datetime.now())[:10]}.txt", "w", encoding="utf-8") as file:
-    #     file.write(data)
-
-    tools = ['python', 'js', 'sql', 'nosql', 'postgres', 'mysql', 'mongodb', 'aws', 'cloud',
-             'fastapi', 'django', 'flask', 'celery', 'redis', 'docker', 'docker swarm', 'asyncio',
-             'git', 'gcp', 'azure', 'react', 'angular', 'kubernetes', 'sqlalchemy', 'keydb',
-             'memcached', 'jenkins', 'kafka', 'helm', 'rabbitmq', 'typescript', 'terraform',
-             'kibana', 'sentry', 'logrocket', 'pagerduty', 'prometheus', 'grafana', 'djangorest',
-             'javascript', 'postgresql', 'rest', 'restful', 'solid', "aiohtpp", "patterns", "oop",
-             "linux", "graphql", "ci/cd", "agile", "ajax", "unix", "pytest", "unittest", "css",
-             "css3", "html5", "html", "react.js", "jira", "selenium", "reactjs", "vue", "orm",
-             "jquery", "openapi", "github", "gitlab", "scrapy", "drf", "pyramid", "http",
-             "puppeteer", "rdbms", "apollo", "elasticsearch", "python3", "spa", "istio", "tdd",
-             "kiss", "dry", "docker-compose", "docker compose", "microservice", "microservices",
-             "websockets", "go", "golang", "java", "php", "k8s", "elastic", "redpanda", "soap",
-             ]
-
-    results = []
-    for tool in tools:
-        results.append(
-            (tool, counter.get(tool))
-        )
-
-    return results

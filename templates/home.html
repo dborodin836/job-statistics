@@ -33,7 +33,7 @@
     <div class="container-checks">
         <ul class="ks-cboxtags">
             {% for segment in skills %}
-            <li><input type="checkbox" id="{{ segment }}" value="{{ segment }}">
+            <li><input type="checkbox" id="{{ segment }}" value="{{ segment }}" name="skills">
                 <label for="{{ segment }}">{{ segment }}</label></li>
             {% endfor %}
         </ul>
@@ -42,7 +42,7 @@
     <div class="form-group">
         <div class="form-group" action="">
             <div style="text-align: center">
-                <input class="search-field" type="text">
+                <input class="search-field" type="text" name="keyword">
             </div>
             <div style="text-align: center">
                 <input class="search-btn" type="submit">

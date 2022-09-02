@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Results</title>
+    <style>
+        #customers {
+          font-family: Arial, Helvetica, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+        }
+
+        #customers td, #customers th {
+          border: 1px solid #ddd;
+          padding: 8px;
+        }
+
+        #customers tr:nth-child(even){background-color: #f2f2f2;}
+
+        #customers tr:hover {background-color: #ddd;}
+
+        #customers th {
+          padding-top: 12px;
+          padding-bottom: 12px;
+          text-align: left;
+          background-color: #1bdbf8;
+          color: white;
+        }
+    </style>
+</head>
+<body>
+    <table id="customers">
+      <tr>
+        <th>Skill</th>
+        <th>Times Requested</th>
+      </tr>
+      {% for skill in data %}
+      <tr>
+        <td>{{ skill.skill }}</td>
+        <td>{{ skill.results }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+</body>
+</html>
