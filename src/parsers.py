@@ -7,6 +7,8 @@ import requests
 from bs4 import BeautifulSoup
 from loguru import logger
 
+from src.request import LinkDownloader
+
 
 class BaseLinkParser(metaclass=abc.ABCMeta):
     """
@@ -61,7 +63,6 @@ class DjinniLinkParser(BaseLinkParser):
         self.offers_links = links
 
     def get_last_page_index(self):
-        # return 1
         html_parser = BeautifulSoup(self.start_page_data, "html.parser")
         try:
             # Black magic. Specific for djinni.
@@ -72,11 +73,13 @@ class DjinniLinkParser(BaseLinkParser):
 
     def get_data(self):
         all_data = []
-        for item in self.offers_links:
+        links_downloader = LinkDownloader(
+            list(map(lambda x: "https://djinni.co" + x["href"], self.offers_links))
+        )
+        links_downloader.download_all()
+        for item in links_downloader.results:
             try:
-                url = "https://djinni.co" + item["href"]
-                logger.info("Getting '%s' (%s)" % (item.getText().strip(), url))
-                parser = BeautifulSoup(self.get_page(url), "html.parser")
+                parser = BeautifulSoup(item, "html.parser")
                 profile = parser.find("p", class_="profile")
                 data = parser.findAll("div", class_="profile-page-section")
                 res = list(map(methodcaller("getText"), data))
